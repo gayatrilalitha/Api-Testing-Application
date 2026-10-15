@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Tester - Simple Postman Alternative</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <!-- Top Main Navigation Bar -->
+  <header class="header">
+    <div class="logo">
+      <span class="logo-title">API Tester</span>
+    </div>
+    <nav class="nav">
+      <button type="button" class="nav-button active" onclick="switchView('dashboard')">API Dashboard</button>
+      <button type="button" class="nav-button" onclick="switchView('performance')">Performance Tracker</button>
+      <button type="button" class="nav-button" onclick="switchView('variables')">Variables</button>
+      <button type="button" class="nav-button" onclick="switchView('history')">History</button>
+      <!-- Settings opens as a popup modal -->
+      <button type="button" class="nav-button" onclick="openSettingsModal()">⚙️ Settings</button>
+      
+      <!-- Username & Separate Logout / Login area -->
+      <div id="nav-user-area" class="nav-user-area">
+        <!-- Rendered dynamically by script.js -->
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Application Container -->
+  <main class="main">
+
+    <!-- 1. API Dashboard View (Two-Column Postman Layout) -->
+    <section id="view-dashboard" class="view active">
+      <div class="dashboard">
+
+        <!-- LEFT COLUMN: Request Configuration -->
+        <div class="request">
+          <h2 class="section-title">Request</h2>
+
+          <!-- Request Input Bar -->
+          <div class="request-bar">
+            <select id="method" class="select">
+              <option value="GET">GET</option>
+              <option value="POST">POST</option>
+              <option value="PUT">PUT</option>
+              <option value="PATCH">PATCH</option>
+              <option value="DELETE">DELETE</option>
+            </select>
+
+            <input 
+              type="text" 
+              id="url" 
+              class="input" 
+              placeholder="https://jsonplaceholder.typicode.com/posts" 
+              value="https://jsonplaceholder.typicode.com/posts"
+            >
+
+            <button type="button" id="send" class="button button-primary">Send</button>
+            <button type="button" id="clear" class="button button-secondary">Clear</button>
+          </div>
+
+          <!-- Live Full URL Preview with query params -->
+          <div class="url-preview-bar">
+            <span class="url-preview-label">Resolved URL:</span>
+            <code id="full-url-preview" class="url-preview-code">https://jsonplaceholder.typicode.com/posts</code>
+          </div>
+
+          <!-- Request Tabs -->
+          <div class="tabs">
+            <button type="button" id="tab-btn-params" class="tab-button active" onclick="switchRequestTab('params')">Params</button>
+            <button type="button" id="tab-btn-headers" class="tab-button" onclick="switchRequestTab('headers')">Headers</button>
+            <button type="button" id="tab-btn-body" class="tab-button" onclick="switchRequestTab('body')">Body (JSON)</button>
+          </div>
+
+          <!-- Params Tab Content -->
+          <div id="tab-params" class="panel active">
+            <div class="panel-header">
+              <span class="panel-title">Query Parameters</span>
+              <button type="button" class="button button-small" onclick="addParamRow()">+ Add Param</button>
+            </div>
+            <div id="params" class="list-container">
+              <!-- Key/value rows will be added here -->
+            </div>
+          </div>
+
+          <!-- Headers Tab Content -->
+          <div id="tab-headers" class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Request Headers</span>
+              <button type="button" class="button button-small" onclick="addHeaderRow()">+ Add Header</button>
+            </div>
+            <div id="headers" class="list-container">
+              <!-- Key/value rows will be added here -->
+            </div>
+          </div>
+
+          <!-- Body Tab Content -->
+          <div id="tab-body" class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Request Body</span>
+              <span id="json-status" class="badge">JSON</span>
+            </div>
+            <textarea 
+              id="body" 
+              class="textarea" 
+              rows="9" 
+              placeholder='{\n  "title": "foo",\n  "body": "bar",\n  "userId": 1\n}'
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Response Display -->
+        <div class="response">
+          <div class="response-header">
+            <h2 class="section-title">Response</h2>
+            <div class="meta">
+              <div class="meta-item">
+                <span class="meta-label">Status:</span>
+                <span id="status" class="status-badge status-empty">-</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Time:</span>
+                <span id="response-time" class="time-badge">-</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Response Tabs -->
+          <div class="tabs">
+            <button type="button" id="resp-btn-pretty" class="tab-button active" onclick="switchResponseTab('pretty')">Pretty</button>
+            <button type="button" id="resp-btn-raw" class="tab-button" onclick="switchResponseTab('raw')">Raw</button>
+            <button type="button" id="resp-btn-headers" class="tab-button" onclick="switchResponseTab('headers')">Headers</button>
+          </div>
+
+          <!-- Response Body Area -->
+          <div class="response-body">
+            <pre id="response" class="code-area">Click "Send" to execute the request.</pre>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 2. Performance Tracker View -->
+    <section id="view-performance" class="view">
+      <div class="card">
+        <div class="panel-header">
+          <h2 class="section-title">Performance Tracker</h2>
+          <button type="button" class="button button-small" onclick="clearPerformance()">Clear Performance</button>
+        </div>
+        <div class="grid">
+          <div class="stat-box">
+            <span class="stat-label">Total Requests</span>
+            <span id="stat-total" class="stat-value">0</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Successful Requests</span>
+            <span id="stat-success" class="stat-value text-green">0</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Failed Requests</span>
+            <span id="stat-fail" class="stat-value text-red">0</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Average Response Time</span>
+            <span id="stat-avg" class="stat-value">0 ms</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Fastest Response</span>
+            <span id="stat-fast" class="stat-value text-blue">-</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Slowest Response</span>
+            <span id="stat-slow" class="stat-value text-amber">-</span>
+          </div>
+        </div>
+
+        <!-- Detailed Request Latency Logs (Method, URL, Status, Latency, Timestamp) -->
+        <div class="table-container" style="margin-top: 24px;">
+          <h3 class="settings-subtitle">Latency & Request Metrics</h3>
+          <div id="performance-logs">
+            <!-- Table rendered dynamically by script.js -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Variables View -->
+    <section id="view-variables" class="view">
+      <div class="card">
+        <div class="panel-header">
+          <h2 class="section-title">Variables</h2>
+          <button type="button" class="button button-small" onclick="addVariableRow()">+ Add Variable</button>
+        </div>
+        <p class="description">Define reusable variables like <code>baseUrl</code> and use them as <code>{{baseUrl}}</code> in your requests.</p>
+        <div id="variables-list" class="list-container">
+          <!-- Variable rows will be added here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. History View -->
+    <section id="view-history" class="view">
+      <div class="card">
+        <div class="panel-header">
+          <h2 class="section-title">Request History</h2>
+          <button type="button" class="button button-small" onclick="clearHistoryList()">Clear History</button>
+        </div>
+        <div id="history-list" class="table-container">
+          <!-- History table will be rendered here -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Settings Modal Popup (Change Username & Change Password Only) -->
+  <div id="modal-settings" class="modal">
+    <div class="modal-content modal-settings-content">
+      <div class="modal-header">
+        <h3 class="modal-title">⚙️ Settings</h3>
+        <button type="button" class="modal-close" onclick="closeSettingsModal()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- 1. Change Username -->
+        <div class="settings-box">
+          <h3 class="settings-subtitle">1. Change Username</h3>
+          <form id="form-username" class="form" onsubmit="handleChangeUsername(event)">
+            <div class="form-group">
+              <label class="label">Current Username</label>
+              <input type="text" id="current-username" class="input" readonly>
+            </div>
+            <div class="form-group">
+              <label class="label">New Username</label>
+              <input type="text" id="new-username" class="input" placeholder="3-20 characters (letters, numbers, _)" required>
+            </div>
+            <div id="username-msg" class="message"></div>
+            <button type="submit" class="button button-primary">Update Username</button>
+          </form>
+        </div>
+
+        <hr class="divider">
+
+        <!-- 2. Change Password -->
+        <div class="settings-box">
+          <h3 class="settings-subtitle">2. Change Password</h3>
+          <form id="form-password" class="form" onsubmit="handleChangePassword(event)">
+            <div class="form-group">
+              <label class="label">Current Password</label>
+              <input type="password" id="current-password" class="input" placeholder="Current password" required>
+            </div>
+            <div class="form-group">
+              <label class="label">New Password</label>
+              <input type="password" id="new-password" class="input" placeholder="Min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special" required>
+            </div>
+            <div class="form-group">
+              <label class="label">Confirm New Password</label>
+              <input type="password" id="confirm-new-password" class="input" placeholder="Repeat new password" required>
+            </div>
+            <div id="password-msg" class="message"></div>
+            <button type="submit" class="button button-primary">Change Password</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login & Signup Modal Popup -->
+  <div id="modal-auth" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title" class="modal-title">Account Access</h3>
+        <button type="button" class="modal-close" onclick="closeAuthModal()">✕</button>
+      </div>
+
+      <div class="modal-tabs">
+        <button type="button" id="auth-tab-login" class="tab-button active" onclick="switchAuthTab('login')">Login</button>
+        <button type="button" id="auth-tab-signup" class="tab-button" onclick="switchAuthTab('signup')">Signup</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="form-login" class="form modal-body" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="label">Email</label>
+          <input type="email" id="login-email" class="input" placeholder="name@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="label">Password</label>
+          <input type="password" id="login-password" class="input" placeholder="Your password" required>
+        </div>
+        <div id="login-msg" class="message"></div>
+        <button type="submit" class="button button-primary">Login</button>
+      </form>
+
+      <!-- Signup Form -->
+      <form id="form-signup" class="form modal-body" style="display: none;" onsubmit="handleSignup(event)">
+        <div class="form-group">
+          <label class="label">Username</label>
+          <input type="text" id="signup-username" class="input" placeholder="3-20 characters" required>
+        </div>
+        <div class="form-group">
+          <label class="label">Email</label>
+          <input type="email" id="signup-email" class="input" placeholder="name@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="label">Password</label>
+          <input type="password" id="signup-password" class="input" placeholder="Min 8 chars, mixed case, number, symbol" required>
+        </div>
+        <div class="form-group">
+          <label class="label">Confirm Password</label>
+          <input type="password" id="signup-confirm-password" class="input" placeholder="Repeat password" required>
+        </div>
+        <div id="signup-msg" class="message"></div>
+        <button type="submit" class="button button-primary">Signup</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/script.js"></script>
+</body>
+</html>

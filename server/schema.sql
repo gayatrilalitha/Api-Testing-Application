@@ -1,0 +1,49 @@
+-- MySQL Database Schema for API Tester
+
+CREATE DATABASE IF NOT EXISTS api_test_db;
+USE api_test_db;
+
+-- 1. Users Table
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(100) NOT NULL UNIQUE,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. History Table
+CREATE TABLE IF NOT EXISTS history (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  method VARCHAR(10) NOT NULL,
+  url TEXT NOT NULL,
+  status VARCHAR(50) NOT NULL,
+  response_time INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- 3. Performance Logs Table
+CREATE TABLE IF NOT EXISTS performance_logs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  method VARCHAR(10) NOT NULL,
+  url TEXT NOT NULL,
+  status VARCHAR(50) NOT NULL,
+  latency INT NOT NULL,
+  is_success TINYINT(1) NOT NULL DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- 4. Variables Table
+CREATE TABLE IF NOT EXISTS variables (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  var_key VARCHAR(255) NOT NULL,
+  var_value TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY user_var_unique (user_id, var_key),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

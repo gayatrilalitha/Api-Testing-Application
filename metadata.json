@@ -1,0 +1,6 @@
+{
+  "name": "API Tester - Simple Postman Alternative",
+  "description": "A beginner-friendly API testing tool built with HTML, CSS, JavaScript, Node.js, and Express.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
