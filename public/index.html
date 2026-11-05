@@ -1,0 +1,304 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Tester</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <header class="header">
+        <h1>API Tester</h1>
+
+        <nav class="navigation">
+            <button type="button" data-view="dashboard">API Dashboard</button>
+            <button type="button" data-view="performance">Performance</button>
+            <button type="button" data-view="variables">Variables</button>
+            <button type="button" data-view="history">History</button>
+            <button type="button" data-view="settings">Settings</button>
+            <button type="button" data-view="auth">Login / Signup</button>
+        </nav>
+    </header>
+
+    <main class="container">
+
+        <!-- API Dashboard -->
+        <section id="dashboard" class="view">
+            <h2>API Request</h2>
+
+            <form id="requestForm">
+                <div class="request-bar">
+                    <label for="method">Method</label>
+                    <select id="method" name="method">
+                        <option>GET</option>
+                        <option>POST</option>
+                        <option>PUT</option>
+                        <option>PATCH</option>
+                        <option>DELETE</option>
+                    </select>
+
+                    <label for="url">Request URL</label>
+                   
+                    <input
+                       type="text"
+                       id="url"
+                       name="url"
+                       placeholder="Enter URL or {{variableName}}"
+                       required
+                    >
+
+
+                    <button type="submit" id="sendRequest">Send</button>
+                    <button type="button" id="clearRequest">Clear</button>
+                </div>
+            </form>
+
+            <!-- <p id="resolvedUrl">
+                Resolved URL: <span>Enter a URL</span>
+            </p> -->
+
+            <!-- Request configuration tabs -->
+            <div class="tabs" role="tablist" aria-label="Request options">
+                <button type="button" data-request-tab="params">Params</button>
+                <button type="button" data-request-tab="headers">Headers</button>
+                <button type="button" data-request-tab="body">Body (JSON)</button>
+            </div>
+
+            <!-- Query parameters -->
+            <section id="paramsPanel" class="request-panel">
+                <h3>Query Parameters</h3>
+
+                <div id="paramsContainer"></div>
+
+                <button type="button" id="addParam">+ Add Parameter</button>
+            </section>
+
+            <!-- Request headers -->
+            <section id="headersPanel" class="request-panel" hidden>
+                <h3>Request Headers</h3>
+
+                <div id="headersContainer"></div>
+
+                <button type="button" id="addHeader">+ Add Header</button>
+            </section>
+
+            <!-- Request body -->
+            <section id="bodyPanel" class="request-panel" hidden>
+                <h3>Request Body</h3>
+
+                <label for="requestBody">JSON body</label>
+                <textarea
+                    id="requestBody"
+                    rows="8"
+                    placeholder='{"title":"Example","body":"Hello","userId":1}'
+                ></textarea>
+            </section>
+
+            <!-- Response -->
+            <section class="response-section">
+                <div class="response-heading">
+                    <h2>Response</h2>
+                    <p>Status: <span id="status">-</span></p>
+                    <p>Time: <span id="responseTime">-</span></p>
+                </div>
+
+                <div class="tabs" role="tablist" aria-label="Response display">
+                    <button type="button" data-response-tab="pretty">Pretty</button>
+                    <button type="button" data-response-tab="raw">Raw</button>
+                    <button type="button" data-response-tab="headers">Headers</button>
+                </div>
+
+                <pre id="response">Click "Send" to execute the request.</pre>
+            </section>
+        </section>
+
+        <!-- Performance Tracker -->
+        <section id="performance" class="view" hidden>
+            <h2>Performance Tracker</h2>
+
+            
+<button id="clearPerformance" type="button" class="clear-button">
+    Clear Performance Data
+</button>
+
+
+            <div class="stats">
+                <article>
+                    <h3>Total Requests</h3>
+                    <p id="totalRequests">0</p>
+                </article>
+
+                <article>
+                    <h3>Passed</h3>
+                    <p id="passedRequests">0</p>
+                </article>
+
+                <article>
+                    <h3>Failed</h3>
+                    <p id="failedRequests">0</p>
+                </article>
+
+                <article>
+                    <h3>Average Response Time</h3>
+                    <p id="averageResponseTime">0 ms</p>
+                </article>
+            </div>
+
+            <div id="performanceContainer"></div>
+        </section>
+
+        <!-- Reusable Variables -->
+        <section id="variables" class="view" hidden>
+            <h2>Reusable Variables</h2>
+
+            <p>
+                Save values such as base URLs or tokens for reuse in requests.
+            </p>
+
+            <form id="variableForm">
+                <label for="variableKey">Variable Name</label>
+                <input
+                    id="variableKey"
+                    name="key"
+                    placeholder="baseUrl"
+                    required
+                >
+
+                <label for="variableValue">Variable Value</label>
+                <input
+                    id="variableValue"
+                    name="value"
+                    placeholder="https://api.example.com"
+                    required
+                >
+
+                <button type="submit">Save Variable</button>
+            </form>
+
+            <div id="variablesContainer"></div>
+        </section>
+
+        <!-- Request History -->
+        <section id="history" class="view" hidden>
+            <h2>Request History</h2>
+
+            <p>View your previous API requests and their results.</p>
+
+            <div id="historyContainer"></div>
+
+            <button type="button" id="clearHistory">Clear History</button>
+        </section>
+
+        <!-- Settings -->
+        <section id="settings" class="view" hidden>
+            <h2>Account Settings</h2>
+
+            <p id="accountInfo">Please log in to view your account settings.</p>
+
+            <form id="usernameForm">
+                <label for="newUsername">New Username</label>
+                <input id="newUsername" name="username">
+
+                <button type="submit">Update Username</button>
+            </form>
+
+            <form id="passwordForm">
+                <label for="currentPassword">Current Password</label>
+                <input
+                    id="currentPassword"
+                    name="currentPassword"
+                    type="password"
+                >
+
+                <label for="newPassword">New Password</label>
+                <input
+                    id="newPassword"
+                    name="newPassword"
+                    type="password"
+                >
+
+                <button type="submit">Change Password</button>
+            </form>
+
+            <button type="button" id="logoutButton">Logout</button>
+        </section>
+
+        <!-- Login and Signup -->
+        <section id="auth" class="view" hidden>
+            <h2>Account</h2>
+
+            <div class="tabs" role="tablist" aria-label="Account options">
+                <button type="button" data-auth-tab="login">Login</button>
+                <button type="button" data-auth-tab="signup">Signup</button>
+            </div>
+
+            <form id="loginForm">
+                <h3>Login</h3>
+
+                <label for="loginEmail">Email</label>
+                <input
+                    id="loginEmail"
+                    name="email"
+                    type="email"
+                    autocomplete="email"
+                    required
+                >
+
+                <label for="loginPassword">Password</label>
+                <input
+                    id="loginPassword"
+                    name="password"
+                    type="password"
+                    autocomplete="current-password"
+                    required
+                >
+
+                <button type="submit">Login</button>
+            </form>
+
+            <form id="signupForm" hidden>
+                <h3>Create Account</h3>
+
+                <label for="signupUsername">Username</label>
+                <input
+                    id="signupUsername"
+                    name="username"
+                    autocomplete="username"
+                    required
+                >
+
+                <label for="signupEmail">Email</label>
+                <input
+                    id="signupEmail"
+                    name="email"
+                    type="email"
+                    autocomplete="email"
+                    required
+                >
+
+                <label for="signupPassword">Password</label>
+                <input
+                    id="signupPassword"
+                    name="password"
+                    type="password"
+                    autocomplete="new-password"
+                    required
+                >
+
+                <button type="submit">Signup</button>
+            </form>
+
+            <p id="authMessage" role="status" aria-live="polite"></p>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>API Tester — Test, inspect and track API requests.</p>
+    </footer>
+</body>
+</html>

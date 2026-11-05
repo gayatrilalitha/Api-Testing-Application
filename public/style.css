@@ -1,0 +1,735 @@
+
+/* =========================
+   1. Global Styles
+========================= */
+
+:root {
+    --primary: #f05a24;
+    --primary-hover: #d94816;
+    --background: #f3f5f8;
+    --surface: #ffffff;
+    --border: #dce1e8;
+    --text: #202938;
+    --muted: #64748b;
+    --success: #16834a;
+    --danger: #dc3545;
+    --code-background: #1e1e1e;
+    --code-text: #e6edf3;
+    --radius: 10px;
+    --shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid rgba(240, 90, 36, 0.25);
+    outline-offset: 2px;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+
+/* =========================
+   2. Header and Navigation
+========================= */
+
+.header {
+    background: var(--surface);
+    padding: 18px 4%;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.header h1 {
+    color: var(--primary);
+    font-size: 27px;
+    letter-spacing: -0.5px;
+}
+
+.navigation {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.navigation button {
+    padding: 10px 14px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--text);
+    font-weight: 600;
+    transition: background 0.2s, color 0.2s;
+}
+
+.navigation button:hover,
+.navigation button.active {
+    color: var(--primary);
+    background: #fff0e8;
+    border-color: #ffd6c2;
+}
+
+
+/* =========================
+   3. Main Layout
+========================= */
+
+.container {
+    width: min(1200px, 94%);
+    margin: 28px auto;
+    min-height: 65vh;
+}
+
+.view {
+    background: var(--surface);
+    padding: 26px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+}
+
+.view h2 {
+    font-size: 21px;
+    margin-bottom: 22px;
+}
+
+.view h3 {
+    font-size: 16px;
+    margin-bottom: 14px;
+}
+
+.view > p {
+    color: var(--muted);
+    margin-bottom: 18px;
+}
+
+
+/* =========================
+   4. Forms and Inputs
+========================= */
+
+label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 7px;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #cbd3df;
+    border-radius: 7px;
+    background: #ffffff;
+    color: var(--text);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(240, 90, 36, 0.10);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #9aa4b2;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 150px;
+    font-family: Consolas, monospace;
+    line-height: 1.6;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+form > input,
+form > select,
+form > textarea {
+    margin-bottom: 16px;
+}
+
+
+/* =========================
+   5. Buttons
+========================= */
+
+button[type="submit"],
+#addParam,
+#addHeader,
+#clearHistory,
+#logoutButton {
+    border: 1px solid var(--primary);
+    background: var(--primary);
+    color: #ffffff;
+    padding: 10px 18px;
+    border-radius: 7px;
+    font-weight: 600;
+    transition: background 0.2s, transform 0.15s;
+}
+
+button[type="submit"]:hover,
+#addParam:hover,
+#addHeader:hover,
+#clearHistory:hover,
+#logoutButton:hover {
+    background: var(--primary-hover);
+}
+
+button[type="submit"]:active,
+#addParam:active,
+#addHeader:active {
+    transform: translateY(1px);
+}
+
+#clearRequest {
+    padding: 10px 17px;
+    background: white;
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 7px;
+}
+
+#clearRequest:hover {
+    background: #f1f5f9;
+}
+
+
+/* =========================
+   6. Request Bar
+========================= */
+
+.request-bar {
+    display: grid;
+    grid-template-columns: auto minmax(100px, 140px) auto minmax(200px, 1fr) auto auto;
+    align-items: center;
+    gap: 10px;
+}
+
+.request-bar label {
+    margin: 0;
+}
+
+.request-bar select,
+.request-bar input {
+    min-width: 0;
+}
+
+.request-bar select {
+    font-weight: 700;
+    color: var(--success);
+}
+
+#resolvedUrl {
+    margin: 16px 0 22px;
+    padding: 12px 14px;
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+#resolvedUrl span {
+    color: var(--primary);
+    font-family: Consolas, monospace;
+}
+
+
+/* =========================
+   7. Tabs
+========================= */
+
+.tabs {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+    margin: 20px 0;
+}
+
+.tabs button {
+    padding: 11px 17px;
+    border: none;
+    border-bottom: 3px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: -1px;
+}
+
+.tabs button:hover {
+    color: var(--primary);
+}
+
+.tabs button.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+
+/* =========================
+   8. Request Parameters
+========================= */
+
+.request-panel {
+    padding: 4px 0 20px;
+}
+
+#paramsContainer,
+#headersContainer,
+#variablesContainer,
+#historyContainer,
+#performanceContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+/*
+   These styles also support rows dynamically
+   created by JavaScript.
+*/
+
+.param-row,
+.header-row,
+.variable-row,
+.history-row,
+.performance-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+.param-row input,
+.header-row input,
+.variable-row input {
+    flex: 1 1 150px;
+    min-width: 0;
+}
+
+.param-row button,
+.header-row button,
+.variable-row button,
+.history-row button {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #ffffff;
+    color: var(--text);
+}
+
+.param-row button:hover,
+.header-row button:hover,
+.variable-row button:hover,
+.history-row button:hover {
+    background: #fff0e8;
+    border-color: #ffd6c2;
+}
+
+
+/* =========================
+   9. Response Viewer
+========================= */
+
+.response-section {
+    margin-top: 28px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border);
+}
+
+.response-heading {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.response-heading h2 {
+    margin: 0 auto 0 0;
+}
+
+.response-heading p {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+#status,
+#responseTime {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 5px;
+    background: #eef2f7;
+    color: var(--text);
+    font-weight: 700;
+}
+
+#response {
+    min-height: 230px;
+    max-height: 500px;
+    overflow: auto;
+    padding: 20px;
+    background: var(--code-background);
+    color: var(--code-text);
+    border-radius: 8px;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    tab-size: 2;
+}
+
+
+/* =========================
+   10. Performance Cards
+========================= */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin: 22px 0;
+}
+
+.stats article {
+    padding: 22px 18px;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.stats h3 {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.stats p {
+    color: var(--primary);
+    font-size: 27px;
+    font-weight: 700;
+}
+
+
+/* =========================
+   11. Login and Signup
+========================= */
+
+#loginForm,
+#signupForm {
+    max-width: 480px;
+    padding: 22px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #ffffff;
+}
+
+#loginForm h3,
+#signupForm h3 {
+    color: var(--primary);
+    margin-bottom: 20px;
+}
+
+#authMessage {
+    margin-top: 14px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================
+   12. History and Variables
+========================= */
+
+.history-row,
+.variable-row,
+.performance-row {
+    justify-content: space-between;
+}
+
+.history-row p,
+.variable-row p,
+.performance-row p {
+    overflow-wrap: anywhere;
+}
+
+.history-row strong,
+.variable-row strong {
+    color: var(--primary);
+}
+
+
+/* =========================
+   13. Footer
+========================= */
+
+footer {
+    padding: 22px 15px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+    background: #ffffff;
+}
+
+
+/* =========================
+   14. Responsive Design
+========================= */
+
+@media (max-width: 1000px) {
+    .header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .request-bar {
+        grid-template-columns: 1fr 2fr;
+    }
+
+    .request-bar label {
+        align-self: end;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .header {
+        padding: 16px 4%;
+    }
+
+    .header h1 {
+        font-size: 23px;
+    }
+
+    .navigation {
+        width: 100%;
+    }
+
+    .navigation button {
+        flex: 1 1 auto;
+        padding: 9px;
+        font-size: 13px;
+    }
+
+    .container {
+        width: 94%;
+        margin: 16px auto;
+    }
+
+    .view {
+        padding: 17px;
+    }
+
+    .request-bar {
+        grid-template-columns: 1fr;
+    }
+
+    .request-bar label {
+        margin-top: 5px;
+    }
+
+    .response-heading {
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .response-heading h2 {
+        width: 100%;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .param-row,
+    .header-row,
+    .variable-row,
+    .history-row,
+    .performance-row {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .param-row input,
+    .header-row input,
+    .variable-row input {
+        width: 100%;
+        flex-basis: auto;
+    }
+
+    #response {
+        font-size: 12px;
+        padding: 14px;
+    }
+}
+
+/* Performance Tracker Header */
+.performance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.performance-header h2 {
+    margin: 0;
+}
+
+/* Clear Performance Button */
+.clear-button {
+    background: var(--primary);;
+    color: #ffffff;
+    border: none;
+    padding: 11px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.25s ease,
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.clear-button:hover {
+    background: #e64a19;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(255, 87, 34, 0.25);
+}
+
+.clear-button:active {
+    transform: translateY(0);
+}
+
+.clear-button:disabled {
+    background: #ffab91;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.clear-button:focus-visible {
+    outline: 3px solid #ffab91;
+    outline-offset: 3px;
+}
+
+/* Variables list */
+.variable-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 16px;
+    margin-top: 14px;
+    background: #ffffff;
+    border: 1px solid #dbe2ea;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    overflow-wrap: anywhere;
+}
+
+.variable-item strong {
+    color: #1e293b;
+    font-size: 15px;
+}
+
+.variable-item p {
+    margin: 0;
+    color: #64748b;
+    overflow-wrap: anywhere;
+}
+
+/* Delete button */
+.variable-item button {
+    background: #ef4444;
+    color: #ffffff;
+    border: none;
+    padding: 9px 16px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease,
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.variable-item button:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(239, 68, 68, 0.2);
+}
+
+.variable-item button:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.variable-item button:disabled {
+    background: #fca5a5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.variable-item button:focus-visible {
+    outline: 3px solid #fca5a5;
+    outline-offset: 3px;
+}
